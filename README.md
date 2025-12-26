@@ -1,6 +1,6 @@
 # backend authentication system using 
--jsonwebtoken(jwt)
--postgreSQL database
+- jsonwebtoken( JWT )
+- postgreSQL DataBase
 
 # dependencies
 
