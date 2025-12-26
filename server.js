@@ -1,6 +1,7 @@
 import express from 'express';
 
 import  config  from './config/config.js';
+import cookieParser from 'cookie-parser';
 import authRouter from './routes/auth.router.js';
 import errorMiddleware from './middleware/error.middleware.js';
 
@@ -8,6 +9,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 
 // API route
