@@ -1,12 +1,19 @@
 import express from 'express';
 
-import  config  from './config/config.js';
+import config  from './config/config.js';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
+
 import authRouter from './routes/auth.router.js';
 import errorMiddleware from './middleware/error.middleware.js';
 
 const app = express();
 
+// middleware
+app.use(cors({
+    origin:config.FRONTEND_URL,
+    credentials:true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

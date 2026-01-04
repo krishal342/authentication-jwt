@@ -18,3 +18,10 @@
 PORT,
 JWT_SECRET,
 DATABASE_URL 
+
+
+# Routes
+
+/auth/signup
+/auth/login
+/auth/logout

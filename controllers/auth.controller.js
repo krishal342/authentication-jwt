@@ -24,7 +24,7 @@ export const signup = async(req, res,next) => {
             data:{
                 firstName,
                 lastName,
-                email,
+                email: email.toLowerCase(),
                 password: hashedPassword
             }
         });
@@ -43,15 +43,24 @@ export const signup = async(req, res,next) => {
 export const login = async(req, res,next) => {
 
     try{
-        const {email, password} = req.body;
+        const { email, password } = req.body;
+
 
         const user = await prisma.user.findUnique({
             where:{email: email.toLowerCase()}
         });
 
+        
+        if( !user){
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password"
+            });
+        }
+        
         const verifyPassword = await bcrypt.compare(password, user.password);
 
-        if( !user || !verifyPassword ){
+        if( !verifyPassword){
             return res.status(401).json({
                 success: false,
                 message: "Invalid email or password"
