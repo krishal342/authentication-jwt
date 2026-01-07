@@ -2,7 +2,7 @@ import express from 'express';
 import passport from 'passport';
 
 
-import { signup, login, logout } from '../controllers/auth.controller.js';
+import { signup, login, logout, sendOTP,resetPassword } from '../controllers/auth.controller.js';
 
 import '../auth/google.js';
 import '../auth/github.js';
@@ -17,6 +17,8 @@ const authRouter = express.Router();
 authRouter.post('/signup', signup);
 authRouter.post('/login', login);
 authRouter.get('/logout', logout);
+authRouter.post('/sendOTP', sendOTP);
+authRouter.post('/resetPassword', resetPassword);
 
 // for google authentication
 authRouter.get('/google',

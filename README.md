@@ -4,6 +4,7 @@
 - postgreSQL DataBase
 - bcrypt
 - cookie-parser
+- nodemailer
 
 # dependencies
 
@@ -17,6 +18,8 @@
  - "express": "^5.2.1",
  - "express-session": "^1.18.2",
  - "jsonwebtoken": "^9.0.3",
+ - "node-cron": "^4.2.1",
+ - "nodemailer": "^7.0.12",
  - "passport": "^0.7.0",
  - "passport-github2": "^0.1.12",
  - "passport-google-oauth20": "^2.0.0",
@@ -38,17 +41,22 @@
  - GITHUB_CLIENT_SECRET
  - GITHUB_CALLBACK_URL
 
+ - APP_EMAIL
+ - APP_PASSWORD
+
 
 # Routes
 
-/auth/signup
-/auth/login
-/auth/logout
+- /auth/signup
+- /auth/login
+- /auth/logout
+- /auth/sendOTP
+- /auth/resetPassword
 
-/auth/google
-/auth/google/callback
+- /auth/google
+- /auth/google/callback
 
-/auth/github
-/auth/github/callback
+- /auth/github
+- /auth/github/callback
 
-/home
+- /home

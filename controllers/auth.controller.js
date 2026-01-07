@@ -1,7 +1,10 @@
 import bcrypt from 'bcrypt';
+import nodemailer from 'nodemailer';
 
 import { prisma } from '../lib/prisma.js';
 import generateToken from '../lib/tokengenration.js';
+
+import config from '../config/config.js';
 
 export const signup = async (req, res, next) => {
     try {
@@ -107,3 +110,107 @@ export const logout = async (req, res, next) => {
 
 }
 
+export const sendOTP = async (req, res, next) => {
+    try{
+        const { email } = req.body;
+
+        const user = await prisma.user.findUnique({
+            where: { email: email.toLowerCase() }
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        const otp = Math.floor(Math.random() * (99999 - 10000 + 1) + 10000).toString();
+        const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes from now
+
+        await prisma.otp.create({
+            data:{
+                userId: user.id,
+                otp,
+                expiresAt: otpExpiry
+            }
+        });
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: config.APP_EMAIL,
+                pass: config.APP_PASSWORD
+            }
+        });
+
+        const mailOptions = {
+            from: config.APP_EMAIL,
+            to: email,
+            subject: 'Password Reset OTP',
+            text: `Your OTP is ${otp}`
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        return res.status(200).json({
+            success: true,
+            message: "OTP sent successfully"
+        });
+
+
+    }catch(err){
+        next(err);
+    }
+}
+
+export const resetPassword = async (req, res, next) => {
+    try{
+        const { email, otp, password } = req.body;
+
+        const user = await prisma.user.findUnique({
+            where: { email: email.toLowerCase() }
+        });
+
+        if(!user){
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        const otpData = await prisma.otp.findFirst({
+            where: {
+                userId: user.id
+            },
+            orderBy: {
+                expiresAt: 'desc'
+            }
+        });
+
+        if(!otpData || otpData.otp !== otp){
+            return res.status(400).json({
+                success: false,
+                message: "Invalid OTP"
+            });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        await prisma.user.update({
+            where:{id: user.id},
+            data: {
+                password: hashedPassword
+            }
+        })
+
+        return res.status(200).json({
+            success: true,
+            message: "Password reset successfully"
+        });
+
+    }catch(err){
+        next(err);
+    }
+}

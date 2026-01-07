@@ -6,6 +6,8 @@ import cors from 'cors';
 import session from 'express-session';
 import passport from 'passport';
 
+import cron from 'node-cron';
+
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import { prisma } from './lib/prisma.js';
 
@@ -30,7 +32,7 @@ app.use(session({
     store: new PrismaSessionStore(
         prisma,
         {
-            checkPeriod: 60 * 1000,
+            checkPeriod: 2 * 60 * 1000,
             dbRecordIdIsSessionId: true,
         }
     )
@@ -52,6 +54,14 @@ app.use(cookieParser());
 app.use('/auth', authRouter);
 app.use('/home', authMiddleware, homeRouter);
 app.use(errorMiddleware);
+
+// cleanup expired otp
+cron.schedule("*/5 * * * *", async () => {
+  await prisma.otp.deleteMany({
+    where: { expiresAt: { lt: new Date() } }
+  });
+});
+
 
 // Server Listening
 app.listen(config.PORT, () => {
