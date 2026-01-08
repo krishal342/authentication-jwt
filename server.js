@@ -41,6 +41,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // middleware
+app.set('trust proxy', 1);
 app.use(cors({
     origin: config.FRONTEND_URL,
     credentials: true
