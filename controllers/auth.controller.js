@@ -5,6 +5,7 @@ import { prisma } from '../lib/prisma.js';
 import  generateToken  from '../lib/tokenGenration.js';
 
 import config from '../config/config.js';
+import { makeStrictEnum } from '@prisma/client/runtime/client';
 
 export const signup = async (req, res, next) => {
     try {
@@ -73,7 +74,12 @@ export const login = async (req, res, next) => {
 
         const token = generateToken(user);
 
-        return res.cookie('loginToken', token).status(200).json({
+        return res.cookie('loginToken', token,{
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            maxAge: 3 * 24 * 60 * 60 * 1000
+        }).status(200).json({
             success: true,
             message: "User logged in successfully"
         });
