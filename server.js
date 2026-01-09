@@ -19,11 +19,23 @@ import homeRouter from './routes/home.router.js'
 
 const app = express();
 
+
+// middleware
+app.set('trust proxy', 1);
+app.use(cors({
+    origin: config.FRONTEND_URL,
+    credentials: true
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
 //middleware for session
 app.use(session({
     secret: 'keyboard_cat',
     resave: false,
     saveUninitialized: false,
+    proxy:true,
     cookie: { 
         httpOnly: true, 
         secure: true,
@@ -41,15 +53,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// middleware
-app.set('trust proxy', 1);
-app.use(cors({
-    origin: config.FRONTEND_URL,
-    credentials: true
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+
 
 
 // API route

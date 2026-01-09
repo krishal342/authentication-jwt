@@ -27,10 +27,10 @@ authRouter.get('/google',
 authRouter.get('/google/callback',
     passport.authenticate('google', { failureRedirect: `${config.FRONTEND_URL}/auth/login` }),
     function (req, res) {
-        req.session.save(() =>{
-            return res.redirect(`${config.FRONTEND_URL}/auth/login`);
-        })
-        res.redirect(`${config.FRONTEND_URL}/`);
+        req.session.save(() => {
+
+            res.redirect(`${config.FRONTEND_URL}/`);
+         });
     }
 );
 
@@ -42,9 +42,7 @@ authRouter.get('/github',
 authRouter.get('/github/callback',
     passport.authenticate('github', { failureRedirect: `${config.FRONTEND_URL}/auth/login` }),
     function (req, res) {
-        req.session.save(() => {
-            return res.redirect(`${config.FRONTEND_URL}/auth/login`);
-        })
+        
         res.redirect(`${config.FRONTEND_URL}/`);
     });
 
