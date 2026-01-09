@@ -26,8 +26,6 @@ app.use(cors({
     origin: config.FRONTEND_URL,
     credentials: true
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 //middleware for session
@@ -52,6 +50,10 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 
 

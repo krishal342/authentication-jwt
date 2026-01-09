@@ -13,6 +13,7 @@ const authMiddleware = async (req, res, next) => {
             next();
         }
         else if (req.user) {
+            console.log('in here')
             req.user = {
                 userId: req.user.id,
                 email: req.user.email,
